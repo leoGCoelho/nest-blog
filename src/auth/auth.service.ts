@@ -2,7 +2,7 @@ import { ConflictException, Injectable, InternalServerErrorException, Unauthoriz
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/entities/user.entity';
-import { RegisterDTO, LoginDTO } from 'src/models/user.model';
+import { RegisterUserDTO, LoginUserDTO } from 'src/models/user.model';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class AuthService {
         private jwtService: JwtService,
     ){}
     
-    async register(credentials: RegisterDTO){
+    async register(credentials: RegisterUserDTO){
         try{
             const user = this.userRepo.create(credentials);
             await user.save();
@@ -30,7 +30,7 @@ export class AuthService {
         }
     }
 
-    async login(credentials: LoginDTO) {
+    async login(credentials: LoginUserDTO) {
         try{
             const user = await this.userRepo.findOne({where: {email: credentials.email}});
             const pwrd = await(user.comparePassword(credentials.password));
