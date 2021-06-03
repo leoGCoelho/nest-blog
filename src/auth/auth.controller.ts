@@ -7,12 +7,12 @@ export class AuthController {
     constructor(private authService: AuthService){}
     
     @Post() 
-    register(@Body(ValidationPipe) credentials: RegisterUserDTO) {
-        return this.authService.register(credentials);
+    register(@Body(ValidationPipe) credentials: { user: RegisterUserDTO }) {
+        return this.authService.register(credentials.user);
     }
 
     @Post('/login') 
-    login(@Body(ValidationPipe) credentials: LoginUserDTO) {
-        return this.authService.login(credentials);
+    login(@Body(ValidationPipe) credentials: { user: LoginUserDTO }) {
+        return this.authService.login(credentials.user);
     }
 }

@@ -2,7 +2,7 @@ import { ConflictException, Injectable, InternalServerErrorException, Unauthoriz
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/entities/user.entity';
-import { RegisterUserDTO, LoginUserDTO } from 'src/models/user.model';
+import { RegisterUserDTO, LoginUserDTO, UpdateUserDTO } from 'src/models/user.model';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -45,5 +45,21 @@ export class AuthService {
         }catch (err){
             throw new UnauthorizedException('Email e/ou Senha Invalidos');
         }
+    }
+
+    async updateUser(username:string, data: UpdateUserDTO){
+        const user = await this.userRepo.update({username}, data);
+        const payload = {username};
+        const token = this.jwtService.sign(payload);
+        
+        const updatedUser = await this.userRepo.findOne({where: {username}});
+        return {user: {...updatedUser.toJSON(), token}};
+    }
+
+    async currentUser(username:string){
+        const user = await this.userRepo.findOne({where: {username}});
+        const payload = {username};
+        const token = this.jwtService.sign(payload);
+        return {user: {...user.toJSON(), token}};
     }
 }
