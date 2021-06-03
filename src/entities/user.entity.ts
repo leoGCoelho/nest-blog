@@ -1,8 +1,9 @@
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany } from "typeorm";
+import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 import { classToPlain, Exclude } from 'class-transformer';
 import { IsEmail } from 'class-validator';
 import { AbstractEntity } from "./abstract-entity";
 import * as bcrypt from 'bcryptjs';
+import { ArticleEntity } from "./article.entity";
 
 @Entity('users')
 export class UserEntity extends AbstractEntity{
@@ -29,6 +30,13 @@ export class UserEntity extends AbstractEntity{
 
     @ManyToMany(type=>UserEntity, user=>user.followers)
     following: UserEntity[];
+
+    @ManyToMany(type=>ArticleEntity, user=>ArticleEntity.favorites)
+    @JoinColumn()
+    favorites: ArticleEntity[];
+
+    @OneToMany(type=>ArticleEntity, article=>article.author)
+    articles:ArticleEntity[];
 
     @BeforeInsert()
     async hashPassword(){
