@@ -16,5 +16,21 @@ export class UserService {
         await this.userRepo.update({username}, data);
         return this.userRepo.findOne({where: {username}});
     }
+
+    async followUser(currUser:UserEntity, username:string){
+        const user = await this.userRepo.findOne({where:{username}, relations:['followers']});
+        user.followers.push(currUser);
+
+        await user.save();
+        return user.toProfile(currUser);
+    }
+
+    async unfollowUser(currUser:UserEntity, username:string){
+        const user = await this.userRepo.findOne({where:{username}, relations:['followers']});
+        user.followers = user.followers.filter(follower=>follower !== currUser);
+
+        await user.save();
+        return user.toProfile(currUser);
+    }
 }
 
