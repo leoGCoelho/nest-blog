@@ -3,6 +3,9 @@
 /node_modules
 pgdata/
 
+# env file
+.env
+
 # Logs
 logs
 *.log
